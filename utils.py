@@ -63,6 +63,42 @@ def augment(image, angle, args):
     image, angle = translate(image, angle, args)
     return image, angle
 
+def load_data(args):
+    images = [] # images
+    angles = [] # corresponding labels
+    rootpath = args.data_dir
+    logFile = open(rootpath+ 'driving_log.csv') # annotations file
+    logReader = csv.reader(logFile) # csv parser for annotations file
+    next(logReader) # skip header
+    # loop over all images in current annotations file
+    loaded_images = 0
+    for row in logReader:#logReader
+        i = np.random.choice(3)
+        source_path = row[i]
+        filename = source_path.split('/')[-1]
+        current_path = args.data_dir +'IMG/' + filename.strip()
+        image = cv2.imread(current_path)
+        #print(current_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)    
+        image = preprocess(image)
+        angle = float(row[3])
+        if i == 0:
+            angle = angle
+        elif i == 1:
+            angle = angle + 0.15
+        else:
+            angle = angle - 0.15
+        images.append(image) 
+        angles.append(angle)
+        loaded_images +=1
+        #if loaded_images % 100 ==0:
+        #    print('Loaded images =', loaded_images)
+    images = np.array(images)
+    angles = list(map(float, angles))
+    angles = np.array(angles)
+    logFile.close()
+    return images, angles
+
 def batch_generator(X, y, args, is_training):
     """
     Generate training image give image paths and associated steering angles
