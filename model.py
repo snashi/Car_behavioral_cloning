@@ -56,7 +56,7 @@ def Model(INPUT_SHAPE):
     model.add(Dense(50, activation = 'elu'))
     model.add(Dense(10, activation = 'elu'))
     model.add(Dense(1))
-    #model.summary()
+    model.summary()
     return model
 
 
@@ -71,4 +71,4 @@ Model_NN.fit_generator(batch_generator(X_train, y_train, args, True),
                     validation_data=batch_generator(X_val, y_val, args, False),
                     nb_val_samples=len(X_unskew_val),
                     verbose=1, shuffle=True)
-Model_NN.save(args.data_dir + 'model_gen_all.h5')
+Model_NN.save(args.data_dir + 'model.h5')
